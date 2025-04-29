@@ -72,11 +72,15 @@ target_link_libraries_system(wolf_runner PUBLIC mdns_cpp::mdns_cpp)
 
 # Enet
 set(CMAKE_PROJECT_INCLUDE_BEFORE "${PROJECT_SOURCE_DIR}/cmake/EnableCMP0048.cmake")
+# Set position independent code flag before fetching ENet
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 FetchContent_Declare(
         enet
         GIT_REPOSITORY https://github.com/cgutman/enet
         GIT_TAG 44c85e16279553d9c052e572bcbfcd745fb74abf)
 FetchContent_MakeAvailable(enet)
+# Reset to previous value after ENet is built
+set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
 target_link_libraries_system(wolf_runner PUBLIC enet)
 unset(CMAKE_PROJECT_INCLUDE_BEFORE)
 

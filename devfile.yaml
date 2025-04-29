@@ -1,0 +1,66 @@
+commands:
+- exec:
+    commandLine: export CCACHE_DIR=/tmp/cache && cmake -Bbuild -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="-O3 -g1 -fno-omit-frame-pointer" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_EXTENSIONS=OFF -G Ninja
+    component: cpp-tools
+    group:
+      isDefault: true
+      kind: build
+    workingDir: /projects/
+  id: configure
+- exec:
+    commandLine: pwd && ls -lah build
+    component: cpp-tools
+    group:
+      isDefault: false
+      kind: build
+    workingDir: /projects/
+  id: list
+- exec:
+    commandLine: CCACHE_DIR=/tmp/ccache ninja -C build
+    component: cpp-tools
+    group:
+      isDefault: false
+      kind: build
+    workingDir: /projects/
+  id: build
+- exec:
+    commandLine: rm -rf build/* && rm -rf build
+    component: cpp-tools
+    group:
+      isDefault: false
+      kind: build
+    workingDir: /projects/
+  id: clean
+- exec:
+    commandLine: cd build && ctest --output-on-failure
+    component: cpp-tools
+    group:
+      kind: test
+    workingDir: /projects/
+  id: run-tests
+components:
+- container:
+    endpoints:
+    - exposure: public
+      name: wolf-server
+      protocol: http
+      targetPort: 8080
+    image: registry.desku.be/deskube/wolf-devel:latest
+    mountSources: true
+    volumeMounts:
+    - name: build
+      path: /projects/build
+  name: cpp-tools
+- name: build
+  volume:
+    size: 1Gi
+metadata:
+  description: Environment for Wolf C++ project development with CMake
+  displayName: Wolf C++ Development Environment
+  name: wolf-cpp
+  tags:
+  - C++
+  - CMake
+  - Wolf
+  version: 1.0.0
+schemaVersion: 2.2.0

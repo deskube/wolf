@@ -13,6 +13,6 @@ if (BUILD_FAKE_UDEV_CLI)
 
     # Executable
     add_executable(fake-udev fake-udev-cli.cpp)
-    target_link_libraries(fake-udev fake-udev::lib -static)
+    target_link_libraries(fake-udev fake-udev::lib)
     target_compile_features(fake-udev PRIVATE cxx_std_17)
 endif ()
